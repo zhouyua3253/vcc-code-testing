@@ -1,5 +1,5 @@
 import React from "react";
-import { GetServerSideProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { VehicleInformation } from "@Models/vehicleInformation";
 import { getVehicleById } from "@Services/vehicleServices";
 import { Flex, Text } from "vcc-ui";
@@ -39,7 +39,27 @@ export default function ShopPage({ vehicle }: ShopPageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<
+export const getStaticPaths: GetStaticPaths<{ id: string }> = async (
+  context
+) => {
+  return {
+    // did generate static shop page content when building project
+    // all the shop pages are generated later
+    paths: [],
+    fallback: "blocking",
+  };
+};
+
+/**
+ * getStaticProps could be cache by CDN, since the max-age=1800.
+ * This function will be executed when
+ * - A request comes in
+ * - At most once every 30 minutes
+ *
+ * HTTP Response Headers:
+ * Cache-Control: s-maxage=1800, stale-while-revalidate
+ */
+export const getStaticProps: GetStaticProps<
   ShopPageProps,
   { id: string }
 > = async (context) => {
@@ -53,7 +73,16 @@ export const getServerSideProps: GetServerSideProps<
   if (!vehicle) {
     return { notFound: true };
   }
+
   return {
     props: { vehicle },
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every 30 minutes
+
+    // Result -
+    // HTTP Response Headers:
+    // Cache-Control: s-maxage=1800, stale-while-revalidate
+    revalidate: 30 * 60, // In seconds
   };
 };
