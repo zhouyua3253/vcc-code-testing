@@ -20,4 +20,10 @@ Default.args = {
     imageUrl:
       "https://www.volvocars.com/images/v/-/media/project/contentplatform/data/media/my23/car-images/xc90-phev-my23-responsive.jpg?h=600&w=800",
   },
+  interactive: true,
+  as: "section",
+  extend: {
+    maxWidth: 600,
+    backgroundColor: "#eee",
+  },
 };

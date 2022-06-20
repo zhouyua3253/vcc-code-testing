@@ -39,6 +39,13 @@ export default function LearnPage({ vehicle }: LearnPageProps) {
   );
 }
 
+/**
+ * getServerSideProps couldn't be cache by CDN, since the max-age=0.
+ * This function will be executed when each request comes.
+ *
+ * HTTP Response Headers:
+ * Cache-Control: private, no-cache, no-store, max-age=0, must-revalidate
+ */
 export const getServerSideProps: GetServerSideProps<
   LearnPageProps,
   { id: string }
@@ -53,6 +60,7 @@ export const getServerSideProps: GetServerSideProps<
   if (!vehicle) {
     return { notFound: true };
   }
+
   return {
     props: { vehicle },
   };
